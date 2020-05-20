@@ -44,9 +44,11 @@ $(document).ready(() => {
 
     socket.on('display', (data) => {
         if (data.typing == true) {
-            const $someonesTyping = $(`<li class='list-group-item typing'>... ${data.name}</li>`)
-            $('#messages').append($someonesTyping);
-            setTimeout($('.typing'.remove()), 10)
+            if ($('.typing').length) {
+            } else {
+                const $someonesTyping = $(`<li class='list-group-item typing'>... ${data.name}</li>`)
+                $('#messages').append($someonesTyping);
+            }
         } else {
             $('.typing').remove();
             const $newChat = $(`<li class='list-group-item'>${data.message} - <small>${data.name}</small></li>`)
