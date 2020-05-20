@@ -46,6 +46,7 @@ $(document).ready(() => {
         if (data.typing == true) {
             const $someonesTyping = $(`<li class='list-group-item typing'>... ${data.name}</li>`)
             $('#messages').append($someonesTyping);
+            setTimeout($('.typing'.remove()), 10)
         } else {
             $('.typing').remove();
             const $newChat = $(`<li class='list-group-item'>${data.message} - <small>${data.name}</small></li>`)
