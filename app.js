@@ -20,22 +20,31 @@ app.get('/', (req, res) => {
 let userName = 'user1'
 
 io.on('connection', (socket) => {
-    userName = 'anonymous';
     console.log('a user has connected');
+
+    socket.on('typing', (data) => {
+        console.log('someones typing')
+        if (data.typing == true) {
+            socket.broadcast.emit('display', data);
+        }
+        else {
+            socket.broadcast.emit('display', data);
+        }
+    })
 
     socket.on('disconnect', () => {
         console.log('a user has disconnected')
         // tell other users you have left
-        io.emit('chat message', 'user has left');
+        io.emit('chat message', { message: 'a user has left', name: 'xxx' });
     })
 
     socket.on('chat message', (data) => {
-        console.log('message:', data)
+        console.log(data)
         io.emit('chat message', data);
     })
 
     socket.on('update user name', (newUserName) => {
-        io.emit('user update', {
+        socket.broadcast.emit('user update', {
             oldUserName: userName,
             newUserName: newUserName,
         })
