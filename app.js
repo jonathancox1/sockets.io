@@ -23,12 +23,12 @@ io.on('connection', (socket) => {
     console.log('a user has connected');
 
     socket.on('typing', (data) => {
+        console.log(data);
         if (data.typing == true) {
             socket.broadcast.emit('display', data);
         }
         else {
             if (data.message != '') {
-                console.log(data);
                 socket.emit('chat message', data);
                 socket.broadcast.emit('display', data);
             }
@@ -37,8 +37,15 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('a user has disconnected')
+        io.emit('chat message', { message: `someone has left the chat` });
+        userNamesArray = userNamesArray.filter(user => {
+            return user != userObj[socket.id];
+        })
+        console.log(userNamesArray)
+        io.emit('userList', userNamesArray);
+
+
         // tell other users you have left
-        io.emit('chat message', { message: `a user has left`, name: '' });
     })
 
     socket.on('chat message', (data) => {
@@ -46,13 +53,17 @@ io.on('connection', (socket) => {
     })
 
     socket.on('update user name', (user) => {
+        console.log(user);
         userNamesArray.push(user.name);
         // creates an object where each userName has unique socketId
-        userObj[user.name] = socket.id;
+        userObj[socket.id] = user.name;
         // assigns unique socket.id to each users
-        user.socketId = socket.id;
+        let id = socket.id;
+        user.socketId = id;
         socket.broadcast.emit('user update', user)
         // socket.emit('userList', userNamesArray);
+        console.log(userNamesArray, userObj, user);
+        io.emit('usersList', userNamesArray);
     })
 })
 

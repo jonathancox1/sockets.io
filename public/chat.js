@@ -3,6 +3,7 @@ $(document).ready(() => {
         name: 'default',
         message: '',
         typing: false,
+        socketId: undefined,
     }
 
     let timeout = undefined;
@@ -14,7 +15,7 @@ $(document).ready(() => {
 
     // listen for typing
     $('.chat-input').keypress(function (e) {
-        var keycode = (event.keyCode ? event.keyCode : event.which)
+        var keycode = (e.keyCode ? e.keyCode : e.which)
         if (keycode != 13) {
             user.typing = true
             user.message = keycode
@@ -46,17 +47,12 @@ $(document).ready(() => {
     })
 
     socket.on('chat message', (data) => {
-        if (data.typing = false) {
-            // const $newChat = $(`<li class='list-group-item'>is typing- <small>${data.name}</small></li>`)
-            // $('#messages').append($newChat);
-        } else {
-            const $newChat = $(`<li class='list-group-item'>${data.message} - <small>${data.name}</small></li>`)
-            $('#messages').append($newChat);
-        }
+        const $newChat = $(`<li class='list-group-item'>${data.message} - <small>${data.name}</small></li>`)
+        $('#messages').append($newChat);
     })
 
-    socket.on('user update', (userData) => {
-        $('#messages').append(`<li class='list-group-item'>${userData.newUserName} has joined</li>`)
+    socket.on('user update', (data) => {
+        $('#messages').append(`<li class='list-group-item'>${data.name} has joined</li>`)
     })
 
     $('.userNameForm').submit(e => {
@@ -65,8 +61,14 @@ $(document).ready(() => {
         $('#userNameButton').toggle();
         $('#chat-button').prop('disabled', false);
         $('#chat-message').prop('disabled', false);
-        const userName = $('#userName').val();
-        socket.emit('update user name', userName)
-        return user.name = userName
+        user.name = $('#userName').val();
+        socket.emit('update user name', user)
+    })
+
+    socket.on('usersList', (data) => {
+        $('#users').empty();
+        data.forEach(element => {
+            $('#users').append(`<li class="list-group-item bg-light text-right" id="${element}">${element}  🌐</li>`);
+        });
     })
 })
