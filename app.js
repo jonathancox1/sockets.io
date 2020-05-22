@@ -21,7 +21,6 @@ let userName = 'user1'
 
 io.on('connection', (socket) => {
     console.log('a user has connected');
-
     socket.on('typing', (data) => {
         console.log('someones typing')
         if (data.typing == true) {
@@ -50,7 +49,6 @@ io.on('connection', (socket) => {
         })
         userName = newUserName;
     })
-
 })
 
 http.listen(port, () => {

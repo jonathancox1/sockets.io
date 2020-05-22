@@ -6,19 +6,10 @@ $(document).ready(() => {
     }
 
     let timeout = undefined;
-
     const socket = io();
 
     $('.chat-form').submit(e => {
         e.preventDefault();
-        // data = {
-        //     message: $('.chat-input').val(),
-        //     userName: 'default',
-        // }
-        // user.message = $('.chat-input').val();
-        // socket.emit('chat message', user);
-        // $('.chat-input').val('');
-
     })
 
     // listen for typing
@@ -30,7 +21,6 @@ $(document).ready(() => {
             socket.emit('typing', user);
         } else {
             if ($('.chat-input').val() == '') {
-
             } else {
                 user.typing = false
                 user.message = $('.chat-input').val();
@@ -41,12 +31,11 @@ $(document).ready(() => {
         }
     });
 
-
     socket.on('display', (data) => {
         if (data.typing == true) {
             if ($('.typing').length) {
             } else {
-                const $someonesTyping = $(`<li class='list-group-item typing'>... ${data.name}</li>`)
+                const $someonesTyping = $(`<li class='list-group-item typing'>${data.name} is typing...</li>`)
                 $('#messages').append($someonesTyping);
             }
         } else {
@@ -58,8 +47,8 @@ $(document).ready(() => {
 
     socket.on('chat message', (data) => {
         if (data.typing = false) {
-            const $newChat = $(`<li class='list-group-item'>is typing- <small>${data.name}</small></li>`)
-            $('#messages').append($newChat);
+            // const $newChat = $(`<li class='list-group-item'>is typing- <small>${data.name}</small></li>`)
+            // $('#messages').append($newChat);
         } else {
             const $newChat = $(`<li class='list-group-item'>${data.message} - <small>${data.name}</small></li>`)
             $('#messages').append($newChat);
@@ -77,11 +66,5 @@ $(document).ready(() => {
         const userName = $('#userName').val();
         socket.emit('update user name', userName)
         return user.name = userName
-
-
     })
-
-
-
 })
-
