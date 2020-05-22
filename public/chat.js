@@ -63,6 +63,8 @@ $(document).ready(() => {
         e.preventDefault();
         $("#userName").prop('disabled', true);
         $('#userNameButton').toggle();
+        $('#chat-button').prop('disabled', false);
+        $('#chat-message').prop('disabled', false);
         const userName = $('#userName').val();
         socket.emit('update user name', userName)
         return user.name = userName

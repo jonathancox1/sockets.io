@@ -16,38 +16,43 @@ app.get('/', (req, res) => {
     })
 })
 
-// default user name
-let userName = 'user1'
+let userNamesArray = [];
+let userObj = {};
 
 io.on('connection', (socket) => {
     console.log('a user has connected');
+
     socket.on('typing', (data) => {
-        console.log('someones typing')
         if (data.typing == true) {
             socket.broadcast.emit('display', data);
         }
         else {
-            socket.broadcast.emit('display', data);
+            if (data.message != '') {
+                console.log(data);
+                socket.emit('chat message', data);
+                socket.broadcast.emit('display', data);
+            }
         }
     })
 
     socket.on('disconnect', () => {
         console.log('a user has disconnected')
         // tell other users you have left
-        io.emit('chat message', { message: 'a user has left', name: 'xxx' });
+        io.emit('chat message', { message: `a user has left`, name: '' });
     })
 
     socket.on('chat message', (data) => {
-        console.log(data)
         io.emit('chat message', data);
     })
 
-    socket.on('update user name', (newUserName) => {
-        socket.broadcast.emit('user update', {
-            oldUserName: userName,
-            newUserName: newUserName,
-        })
-        userName = newUserName;
+    socket.on('update user name', (user) => {
+        userNamesArray.push(user.name);
+        // creates an object where each userName has unique socketId
+        userObj[user.name] = socket.id;
+        // assigns unique socket.id to each users
+        user.socketId = socket.id;
+        socket.broadcast.emit('user update', user)
+        // socket.emit('userList', userNamesArray);
     })
 })
 
